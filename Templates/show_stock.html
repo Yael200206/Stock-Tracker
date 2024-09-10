@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block title %}Stock Information{% endblock %}
+
+{% block content %}
+<h2 class="mt-5">Stock Information</h2>
+<div class="row mt-3">
+    {% for product in stock %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if product.photo %}
+            <img src="data:image/jpeg;base64,{{ product.photo | b64encode }}" class="card-img-top" alt="{{ product.description }}">
+            {% else %}
+            <img src="https://via.placeholder.com/150" class="card-img-top" alt="No photo">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ product.description }}</h5>
+                <p class="card-text">
+                    <strong>Code:</strong> {{ product.code }}<br>
+                    <strong>Current Stock:</strong> {{ product.current_stock }}<br>
+                    <strong>Min Stock:</strong> {{ product.min_stock }}<br>
+                    <strong>Max Stock:</strong> {{ product.max_stock }}<br>
+                    <strong>Location:</strong> {{ product.location }}<br>
+                    <strong>Purchase Price:</strong> ${{ product.purchase_price }}<br>
+                    <strong>Sale Price:</strong> ${{ product.sale_price }}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

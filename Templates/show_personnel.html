@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block title %}Personal Information{% endblock %}
+
+{% block content %}
+<h2 class="mt-5">Personal Information</h2>
+<div class="row mt-3">
+    {% for person in personnel %}
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            {% if person.photo %}
+            <img src="data:image/jpeg;base64,{{ person.photo | b64encode }}" class="card-img-top" alt="{{ person.name }}">
+            {% else %}
+            <img src="https://via.placeholder.com/150" class="card-img-top" alt="No photo">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ person.name }}</h5>
+                <p class="card-text">
+                    <strong>Status:</strong> 
+                    {% if person.status == 'activo' %}
+                        <span class="text-success">Activo</span>
+                    {% else %}
+                        <span class="text-danger">Inactivo</span>
+                    {% endif %}<br>
+                    <strong>Phone:</strong> {{ person.phone }}<br>
+                    <strong>RFC:</strong> {{ person.rfc }}<br>
+                </p>
+                <a href="{{ url_for('generate_qr', id=person.id) }}" class="btn btn-primary btn-sm">Generar QR</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

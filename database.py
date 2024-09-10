@@ -1,43 +1,47 @@
 import pymysql
+import base64
 
 class Database:
     def __init__(self):
-        # Configuración de conexión a la base de datos
-        self.host = 'localhost'        # Cambia esto si usas otro host
-        self.user = 'tu_usuario'       # Usuario de la base de datos
-        self.password = 'tu_contraseña' # Contraseña de la base de datos
-        self.db = 'nombre_de_tu_base_de_datos' # Nombre de tu base de datos
+        self.connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='',
+            database='stocktracker',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        self.cursor = self.connection.cursor()
 
-        # Conectar a la base de datos
-        try:
-            self.connection = pymysql.connect(
-                host=self.host,
-                user=self.user,
-                password=self.password,
-                db=self.db,
-                cursorclass=pymysql.cursors.DictCursor
-            )
-            self.cursor = self.connection.cursor()
-            print("Conexión exitosa a la base de datos")
-        except Exception as e:
-            print(f"Error en la conexión a la base de datos: {e}")
-
-    def fetch_user(self, username, password):
-        """Método para obtener un usuario según su username y password"""
+    def validate_login(self, username, password):
+        """Método para validar el inicio de sesión."""
         sql = "SELECT * FROM users WHERE username = %s AND password = %s"
         self.cursor.execute(sql, (username, password))
         return self.cursor.fetchone()
 
-    def close(self):
-        """Cerrar la conexión a la base de datos"""
-        self.connection.close()
+    def fetch_personnel(self):
+        """Método para obtener el personal."""
+        sql = "SELECT * FROM personnel"
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
 
-# Ejemplo de uso en caso de ejecutar este archivo por separado
-if __name__ == "__main__":
-    db = Database()
-    user = db.fetch_user('admin', 'adminpassword')
-    if user:
-        print("Usuario encontrado:", user)
-    else:
-        print("Usuario no encontrado")
-    db.close()
+    def fetch_stock(self):
+        """Método para obtener el stock de productos."""
+        sql = "SELECT * FROM stock"
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
+    def get_person_by_id(self, person_id):
+        """Método para obtener una persona específica por ID."""
+        sql = "SELECT * FROM personnel WHERE id = %s"
+        self.cursor.execute(sql, (person_id,))
+        return self.cursor.fetchone()
+
+    def update_person_status(self, person_id, status):
+        """Método para actualizar el estado de una persona."""
+        sql = "UPDATE personnel SET status = %s WHERE id = %s"
+        self.cursor.execute(sql, (status, person_id))
+        self.connection.commit()
+
+    def close(self):
+        self.cursor.close()
+        self.connection.close()

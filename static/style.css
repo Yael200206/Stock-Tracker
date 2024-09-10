@@ -14,3 +14,7 @@ h3 {
 .btn-primary {
     background-color: #007bff;
 }
+.card {
+    width: 100%;
+    max-width: 250px;
+}
